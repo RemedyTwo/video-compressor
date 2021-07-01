@@ -1,0 +1,4 @@
+.vscode/launch.json
+tools/ffmpeg.exe
+tools/ffplay.exe
+tools/ffprobe.exe

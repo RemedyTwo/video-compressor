@@ -1,0 +1,8 @@
+{
+    "ffmpeg path": "E:\\sbilal\\Code\\8mo-video\\tools\\ffmpeg.exe",
+    "ffprobe path": "E:\\sbilal\\Code\\8mo-video\\tools\\ffprobe.exe",
+    "output path": "output.mp4",
+    "output resolution": [1280, 720],
+    "expected size": 8000,
+    "audio bitrate": 96
+}
