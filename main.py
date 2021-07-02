@@ -13,9 +13,15 @@ def main(argv: str) -> None:
     video_bitrate = get_bitrate_under_size_with_audio(file_path, audio_bitrate, expected_size)
     command1 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + "k -pass 1 -an -f mp4 NUL"
     command2 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + "k -pass 2 -c:a aac -b:a " + str(audio_bitrate) + "k " + output_path
-    print("command1: " + command1 + "\ncommand2: " + command2)
+    print(
+        "command1: " + command1 + 
+        "\ncommand2: " + command2
+    )
     os.system(command1)
     os.system(command2)
+    os.remove("ffmpeg2pass-0.log")
+    os.remove("ffmpeg2pass-0.log.mbtree")
+    input("Process finished.")
 
 def get_video_length(file_path: str) -> int:
     command = ffprobe_path + " -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " + file_path
