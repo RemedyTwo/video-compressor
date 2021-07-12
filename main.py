@@ -21,8 +21,10 @@ def main(argv: str) -> None:
     )
     os.system(command1)
     os.system(command2)
+    # Delete temp files from ffmpeg two-pass encoding
     os.remove("ffmpeg2pass-0.log")
     os.remove("ffmpeg2pass-0.log.mbtree")
+    
     input("Process finished.")
 
 def get_video_length(file_path: str) -> int:
