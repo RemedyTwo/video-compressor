@@ -6,8 +6,8 @@ ffprobe_path = "ffprobe"
 config_file = json.load(open("config.json"))
 output_path = config_file.get("output path")
 output_resolution = config_file.get("output resolution")
-expected_size = config_file.get("expected size") * 1000
-audio_bitrate = config_file.get("audio bitrate")
+expected_size = config_file.get("expected size") * 1000 # from kilobytes to bytes
+audio_bitrate = config_file.get("audio bitrate") # kilobytes
 
 def main(argv: str) -> None:
     file_path = "\"" + argv + "\""
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     else:
         root = tkinter.Tk()
         root.withdraw()
-        files = filedialog.askopenfilenames()
+        files = filedialog.askopenfilenames(title = "Select video(s) to compress", filetypes = [("Video MP4", ".mp4")])
 
     for file in files:
         # Ignore file if already below wanted size
