@@ -15,18 +15,23 @@ def main(argv: str) -> None:
     command1 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 1 -an -f mp4 NUL"
     command2 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 2 -c:a aac -b:a " + str(audio_bitrate) + "k " + output_path
     print(
-        "command1: " + command1 + 
-        "\ncommand2: " + command2
+        "pass 1: " + command1 + 
+        "\npass 2: " + command2
     )
-    os.system(command1)
-    os.system(command2)
+    subprocess.call(command1, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    print("First pass passed.")
+    subprocess.call(command2, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    print("Second pass passed.")
+
     # Delete temp files from ffmpeg two-pass encoding
     os.remove("ffmpeg2pass-0.log")
     os.remove("ffmpeg2pass-0.log.mbtree")
 
-    input("Process finished.")
+    input("Compression complete. Press any key to exit...")
 
 def get_video_length(file_path: str) -> int:
+    '''Get length of the video path set in parameter.'''
+
     command = ffprobe_path + " -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " + file_path
     output = str(subprocess.check_output(command, shell=True)).removeprefix("b'").removesuffix("\\r\\n'")
     output = int(float(output)) + 1
