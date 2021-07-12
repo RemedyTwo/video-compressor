@@ -41,9 +41,9 @@ def get_bitrate_under_size_with_audio(file_path: str, audio_bitrate: int, expect
     return get_bitrate_under_size(file_path, expected_size) - audio_bitrate
 
 if __name__ == "__main__":
-    try:
+    if (len(sys.argv) > 1):
         files = sys.argv[1:]
-    except IndexError:
+    else:
         root = tk.Tk()
         root.withdraw()
         files = filedialog.askopenfilenames()
