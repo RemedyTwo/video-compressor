@@ -12,9 +12,9 @@ def main(argv: str) -> None:
     output_resolution = config_file.get("output resolution")
     expected_size = config_file.get("expected size")
     audio_bitrate = config_file.get("audio bitrate")
-    video_bitrate = get_bitrate_under_size_with_audio(file_path, audio_bitrate, expected_size)
-    command1 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + "k -pass 1 -an -f mp4 NUL"
-    command2 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + "k -pass 2 -c:a aac -b:a " + str(audio_bitrate) + "k " + output_path
+    video_bitrate = get_bitrate_under_size_with_audio(file_path, audio_bitrate * 1000, expected_size * 1000)
+    command1 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 1 -an -f mp4 NUL"
+    command2 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 2 -c:a aac -b:a " + str(audio_bitrate) + "k " + output_path
     print(
         "command1: " + command1 + 
         "\ncommand2: " + command2
@@ -24,7 +24,7 @@ def main(argv: str) -> None:
     # Delete temp files from ffmpeg two-pass encoding
     os.remove("ffmpeg2pass-0.log")
     os.remove("ffmpeg2pass-0.log.mbtree")
-    
+
     input("Process finished.")
 
 def get_video_length(file_path: str) -> int:
@@ -42,10 +42,11 @@ def get_bitrate_under_size_with_audio(file_path: str, audio_bitrate: int, expect
 
 if __name__ == "__main__":
     try:
-        main(sys.argv[1])
+        files = sys.argv[1:]
     except IndexError:
         root = tk.Tk()
         root.withdraw()
         files = filedialog.askopenfilenames()
-        for file in files:
-            main(file)
+
+    for file in files:
+        main(file)
