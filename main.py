@@ -1,3 +1,5 @@
+import tkinter as tk
+from tkinter import filedialog
 import json, os, subprocess, sys
 
 ffmpeg_path = "ffmpeg"
@@ -40,4 +42,8 @@ if __name__ == "__main__":
     try:
         main(sys.argv[1])
     except IndexError:
-        input("You need to drag & drop a video file to this program.")
+        root = tk.Tk()
+        root.withdraw()
+        files = filedialog.askopenfilenames()
+        for file in files:
+            main(file)
