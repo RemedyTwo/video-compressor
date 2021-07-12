@@ -5,14 +5,14 @@ import json, os, subprocess, sys
 ffmpeg_path = "ffmpeg"
 ffprobe_path = "ffprobe"
 config_file = json.load(open("config.json"))
+output_path = config_file.get("output path")
+output_resolution = config_file.get("output resolution")
+expected_size = config_file.get("expected size") * 1000
+audio_bitrate = config_file.get("audio bitrate")
 
 def main(argv: str) -> None:
     file_path = "\"" + argv + "\""
-    output_path = config_file.get("output path")
-    output_resolution = config_file.get("output resolution")
-    expected_size = config_file.get("expected size")
-    audio_bitrate = config_file.get("audio bitrate")
-    video_bitrate = get_bitrate_under_size_with_audio(file_path, audio_bitrate * 1000, expected_size * 1000)
+    video_bitrate = get_bitrate_under_size_with_audio(file_path, audio_bitrate * 1000, expected_size)
     command1 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 1 -an -f mp4 NUL"
     command2 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 2 -c:a aac -b:a " + str(audio_bitrate) + "k " + output_path
     print(
@@ -49,4 +49,6 @@ if __name__ == "__main__":
         files = filedialog.askopenfilenames()
 
     for file in files:
-        main(file)
+        # Ignore file if already below wanted size
+        if (os.path.getsize(file) > expected_size):
+            main(file)
