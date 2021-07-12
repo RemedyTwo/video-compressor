@@ -1,6 +1,5 @@
-import tkinter as tk
+import json, os, tkinter, subprocess, sys
 from tkinter import filedialog
-import json, os, subprocess, sys
 
 ffmpeg_path = "ffmpeg"
 ffprobe_path = "ffprobe"
@@ -44,7 +43,7 @@ if __name__ == "__main__":
     if (len(sys.argv) > 1):
         files = sys.argv[1:]
     else:
-        root = tk.Tk()
+        root = tkinter.Tk()
         root.withdraw()
         files = filedialog.askopenfilenames()
 
