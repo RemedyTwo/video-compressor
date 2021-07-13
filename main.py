@@ -12,16 +12,22 @@ audio_bitrate = config_file.get("audio bitrate") # kilobytes
 def main(argv: str) -> None:
     file_path = "\"" + argv + "\""
     video_bitrate = get_bitrate_under_size_with_audio(file_path, audio_bitrate * 1000, expected_size)
-    command1 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 1 -an -f mp4 NUL"
-    command2 = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 2 -c:a aac -b:a " + str(audio_bitrate) + "k " + output_path
+    first_pass_command = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 1 -an -f mp4 NUL"
+    second_pass_command = ffmpeg_path + " -y -i " + file_path + " -c:v libx264 -vf scale=\"" + str(output_resolution[0]) + ":" + str(output_resolution[1]) + "\" -b:v " + str(video_bitrate) + " -pass 2 -c:a aac -b:a " + str(audio_bitrate) + "k " + output_path
     print(
-        "pass 1: " + command1 + 
-        "\npass 2: " + command2
+        "Information:\n" +
+        "\tInput path: " + file_path + "\n"
+        "\tVideo bitrate: " + str(video_bitrate) + "\n"
+        "\tAudio bitrate: " + str(audio_bitrate * 1000) + "\n"
+        "\tOutput resolution: " + str(output_resolution[0]) + "x" + str(output_resolution[1]) + "\n"
+        "\tExpected size: " + str(expected_size) + "\n\n"
+        "Pass 1 command: " + first_pass_command + "\n"
+        "Pass 2 command: " + second_pass_command + "\n"
     )
-    subprocess.call(command1, creationflags=subprocess.CREATE_NEW_CONSOLE)
-    print("First pass passed.")
-    subprocess.call(command2, creationflags=subprocess.CREATE_NEW_CONSOLE)
-    print("Second pass passed.")
+    subprocess.call(first_pass_command, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    print("First pass passed.\n")
+    subprocess.call(second_pass_command, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    print("Second pass passed.\n")
 
     # Delete temp files from ffmpeg two-pass encoding
     os.remove("ffmpeg2pass-0.log")
